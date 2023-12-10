@@ -46,6 +46,14 @@ class Particle_Set:
 
     # Non-relativistic
     def __generateVelocity(self, particle: Species, boundary: Boundary):
-        stdev = np.sqrt((constants.elementary_charge * particle.temperature) / (particle.mass * constants.electron_mass))
-        particle.velocity = np.random.normal(0, stdev, particle.num_of_particle)
+        if particle.velocity_init == 'normal':
+            stdev = np.sqrt((constants.elementary_charge * particle.temperature) / (particle.mass * constants.electron_mass))
+            particle.velocity = np.random.normal(0, stdev, particle.num_of_particle)
+        elif particle.velocity_init == 'injection':
+            # This Part is Hard-Coded!
+            # Need TODO!!!!!!!!!!!!!
+            energy = 10 # ev
+            injection_speed_val = np.sqrt(energy*constants.elementary_charge/(particle.mass * constants.electron_mass))
+            print("fastion injected speed :", injection_speed_val)
+            particle.velocity = np.random.choice([-injection_speed_val, injection_speed_val], size=particle.num_of_particle)
     

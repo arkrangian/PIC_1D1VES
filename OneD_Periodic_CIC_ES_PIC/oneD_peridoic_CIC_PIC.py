@@ -63,6 +63,7 @@ class PIC_1D1V_ES:
 
         self.f_ion0VelDist, self.wr_ion0VelDist = self.__createFileIO(folder_name=self.folder_name, file_name= 'ion0_velDist.csv')
         self.f_electronVelDist, self.wr_electronVelDist = self.__createFileIO(folder_name=self.folder_name, file_name= 'electron_velDist.csv')
+        self.f_ion1VelDist, self.wr_ion1VelDist = self.__createFileIO(folder_name=self.folder_name, file_name='ion1_velDist.csv')
 
     def __createFileIO(self, folder_name: str, file_name: str):
         path = os.path.join(folder_name, file_name)
@@ -155,7 +156,7 @@ class PIC_1D1V_ES:
 
             # Ion(Maxwellian) distribution
             ion0_vel_width = 1000
-            ion0_hist, ion0_edge = self.particles.get_particle_velDist('ion', vel_width=ion0_vel_width)
+            ion0_hist, ion0_edge = self.particles.get_particle_velDist('ion0', vel_width=ion0_vel_width)
             self.wr_ion0VelDist.writerow([i, i*self.timestep] + list(ion0_edge))
             self.wr_ion0VelDist.writerow([i, i*self.timestep] + list(ion0_hist))
 
@@ -163,6 +164,11 @@ class PIC_1D1V_ES:
             elec_hist, elec_edge = self.particles.get_particle_velDist('electron', vel_width=elec_vel_width)
             self.wr_electronVelDist.writerow([i, i*self.timestep] + list(elec_edge))
             self.wr_electronVelDist.writerow([i, i*self.timestep] + list(elec_hist))
+
+            ion1_vel_width = 1000
+            ion1_hist, ion1_edge = self.particles.get_particle_velDist('ion1', vel_width=ion1_vel_width)
+            self.wr_ion1VelDist.writerow([i, i*self.timestep] + list(ion1_edge))
+            self.wr_ion1VelDist.writerow([i, i*self.timestep] + list(ion1_hist))
         
     
     def simulationEnd(self) -> None:
@@ -172,3 +178,4 @@ class PIC_1D1V_ES:
         self.f_cellE.close()
         self.f_ion0VelDist.close()
         self.f_electronVelDist.close()
+        self.f_ion1VelDist.close()

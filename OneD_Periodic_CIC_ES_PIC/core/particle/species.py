@@ -12,6 +12,7 @@ class Species:
         self.Sptcl_number_density = info['Sptcl_number_density']        # Density of superparticle (weight is not included)
         self.Sptcl_weight = info['Sptcl_weight']                        # Weight of superparticle
         self.position_init = info['position_init']                      # Position init ('random', 'uniform'), 'uniform' means uniformly distributed
+        self.velocity_init = info['velocity_init']                      # Velocity init ('normal', 'injection') todo!!! (injection is hardcoded)
         self.motion_fix = info['motion_fix']                            # If True, don't push particle
         self.boundary_condition = info['boundary_condition']            # ('periodic'), 'reflect' will be added(Todo)
         self.num_of_particle = None                                     # Insert by particle generator
