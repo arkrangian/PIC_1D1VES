@@ -17,6 +17,7 @@ class Particle_Set:
     def generate_particles(self, boundary: Boundary):
         for particle in self.particles:
             particle.num_of_particle = int(particle.Sptcl_number_density * boundary.system_volume)
+            print("num of particles(",particle.name," ) :",particle.num_of_particle)
             self.__generateLabel(particle, boundary)
             self.__generateLocation(particle, boundary)
             self.__generateVelocity(particle, boundary)
@@ -26,6 +27,13 @@ class Particle_Set:
         for particle in self.particles:
             totalKE += particle.get_totalKE()
         return totalKE
+    
+    def get_particle_velDist(self, speciesName: str, vel_width: np.float64 ) -> tuple[np.ndarray, np.ndarray]:
+        for particle in self.particles:
+            if(particle.name == speciesName):
+                return particle.get_velDistribution(vel_width)
+        return tuple[np.array([]), np.array([])]
+
     
     def __generateLabel(self, particle: Species, boundary: Boundary):
         particle.label = np.arange(0, particle.num_of_particle)

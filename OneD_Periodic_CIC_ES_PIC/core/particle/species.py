@@ -50,6 +50,16 @@ class Species:
 
     def get_totalKE(self) -> np.float64:
         return 0.5 * self.mass * constants.electron_mass * np.sum(self.velocity * self.velocity)
+    
+    def get_velDistribution(self, vel_width) -> tuple[np.ndarray, np.ndarray]:
+        hist, edges = np.histogram(self.velocity, bins=np.arange(0, max(self.velocity)+vel_width, vel_width), density=True)
+
+        # Filter Nonzero
+        non_zero_bins = hist > 0
+        hist = hist[non_zero_bins]
+        edges = edges[:-1][non_zero_bins]
+
+        return (hist, edges)
 
     def __argsort(self, r: np.ndarray, v: np.ndarray, l: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         idx = np.argsort(r)

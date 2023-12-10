@@ -61,6 +61,15 @@ class PIC_1D1V_ES:
         self.f_cellE = open(path_cellE,'w',newline='')
         self.wr_cellE = csv.writer(self.f_cellE)
 
+        self.f_ion0VelDist, self.wr_ion0VelDist = self.__createFileIO(folder_name=self.folder_name, file_name= 'ion0_velDist.csv')
+        self.f_electronVelDist, self.wr_electronVelDist = self.__createFileIO(folder_name=self.folder_name, file_name= 'electron_velDist.csv')
+
+    def __createFileIO(self, folder_name: str, file_name: str):
+        path = os.path.join(folder_name, file_name)
+        fileIO = open(path, 'w', newline='')
+        csvIO = csv.writer(fileIO)
+        return fileIO, csvIO
+
     def effectiveCheck(self):
         isEffective, effective_inform = Effective_checker.isEffective(
             dx = self.boundary.cell_length, 
@@ -133,13 +142,27 @@ class PIC_1D1V_ES:
 
     def results_saver(self, i):
         if(i%self.every == 0):
+            # Kinetic, Potential, Total Energy
             KE = self.particles.get_totalKE()
             PE = self.boundary.get_totalEME()
             TotalE = KE + PE
             self.wr_Total_E.writerow([i, i*self.timestep, TotalE])
             self.wr_KE.writerow([i, i*self.timestep, KE])
             self.wr_EPE.writerow([i, i*self.timestep, PE])
-            self.wr_cellE.writerow(list(np.append([i, i*self.timestep], self.boundary.cell_Efield)))
+
+            # Cell Electric Field
+            self.wr_cellE.writerow(list(self.boundary.cell_Efield))
+
+            # Ion(Maxwellian) distribution
+            ion0_vel_width = 1000
+            ion0_hist, ion0_edge = self.particles.get_particle_velDist('ion', vel_width=ion0_vel_width)
+            self.wr_ion0VelDist.writerow([i, i*self.timestep] + list(ion0_edge))
+            self.wr_ion0VelDist.writerow([i, i*self.timestep] + list(ion0_hist))
+
+            elec_vel_width = 50000
+            elec_hist, elec_edge = self.particles.get_particle_velDist('electron', vel_width=elec_vel_width)
+            self.wr_electronVelDist.writerow([i, i*self.timestep] + list(elec_edge))
+            self.wr_electronVelDist.writerow([i, i*self.timestep] + list(elec_hist))
         
     
     def simulationEnd(self) -> None:
@@ -147,3 +170,5 @@ class PIC_1D1V_ES:
         self.f_KE.close()
         self.f_EPE.close()
         self.f_cellE.close()
+        self.f_ion0VelDist.close()
+        self.f_electronVelDist.close()
